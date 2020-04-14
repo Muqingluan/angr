@@ -2974,15 +2974,15 @@ class CFGFast(ForwardAnalysis, CFGBase):    # pylint: disable=abstract-method
 
         return endpoints
 
-    def _get_tail_caller(self, tailnode, seen=set()):
+    def _get_tail_caller(self, tailnode, seen):
         """
-        recursively search predecessors for the actual caller  
+        recursively search predecessors for the actual caller
         for a tailnode that we will return to
 
         :return: list of callers for a possible tailnode
         """
 
-        if(tailnode.addr in seen):
+        if tailnode.addr in seen:
             return []
         seen.add(tailnode.addr)
 
@@ -2992,7 +2992,7 @@ class CFGFast(ForwardAnalysis, CFGBase):    # pylint: disable=abstract-method
         jump_callers = []
 
         for jf in jump_funcs:
-            if jf != None:
+            if jf is not None:
                 jump_callers.extend(self._get_tail_caller(jf, seen))
 
         callers.extend(jump_callers)
@@ -3029,8 +3029,9 @@ class CFGFast(ForwardAnalysis, CFGBase):    # pylint: disable=abstract-method
 
             # handle callers for tailcall optimizations if flag is enabled
             if self._detect_tail_calls and startpoint.addr in self._tail_calls:
-                l.debug("Handling return address for tail call for func %x" % func_addr)
-                tail_callers = self._get_tail_caller(startpoint)
+                l.debug("Handling return address for tail call for func %x", func_addr)
+                seen = set()
+                tail_callers = self._get_tail_caller(startpoint, seen)
                 callers.extend(tail_callers)
 
             # for each caller, since they all end with a call instruction, get the immediate successor
