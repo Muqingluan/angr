@@ -658,7 +658,7 @@ def test_tail_call_optimization_detection_armel():
         nose.tools.assert_in(member, all_func_addrs)
 
     # also test for tailcall return addresses
-    
+
     # mapping of return blocks to return addrs that are the actual callers of certain tail-calls endpoints
     tail_call_return_addrs = {0x8002bd9: [0x800275f],   # 0x8002bc1
                               0x80046d7: [0x800275f],   # 0x80046c1
@@ -667,20 +667,19 @@ def test_tail_call_optimization_detection_armel():
                               0x800284d: [0x800028b, 0x80006e1, 0x80006e7],   # 0x8002839
                               0x80037f5: [0x800270b, 0x8002733, 0x8002759, 0x800098f, 0x8000997], # 0x80037ad
                               0x80037ef: [0x800270b, 0x8002733, 0x8002759, 0x800098f, 0x8000997], # 0x80037ad
-                              0x8002cc9: [0x8002d3b, 0x8002b99, 0x8002e9f, 0x80041ad, 
-                                          0x8004c87, 0x8004d35, 0x8002efb, 0x8002be9, 
-                                          0x80046eb, 0x800464f, 0x8002a09, 0x800325f, 
+                              0x8002cc9: [0x8002d3b, 0x8002b99, 0x8002e9f, 0x80041ad,
+                                          0x8004c87, 0x8004d35, 0x8002efb, 0x8002be9,
+                                          0x80046eb, 0x800464f, 0x8002a09, 0x800325f,
                                           0x80047c1],    # 0x8002c09
                               0x8004183: [0x8002713],    # 0x8004165
-                              0x8004c31: [0x8002713],    # 0x8004be1 
-                              0x8004c69: [0x8002713],    # 0x8004be1 
+                              0x8004c31: [0x8002713],    # 0x8004be1
+                              0x8004c69: [0x8002713],    # 0x8004be1
                               0x8002ef1: [0x800273b]}    # 0x8002eb1
 
     # check all expected return addrs are present
-    for returning_block_addr in tail_call_return_addrs.keys():
+    for returning_block_addr, expected_return_addrs in tail_call_return_addrs.items():
         returning_block = cfg.model.get_any_node(returning_block_addr)
         return_block_addrs = [rb.addr for rb in cfg.model.get_successors(returning_block)]
-        expected_return_addrs = tail_call_return_addrs[returning_block_addr]
         msg = "%x: unequal sizes of expected_addrs [%d] and return_block_addrs [%d]" % \
                             (returning_block_addr, len(expected_return_addrs), len(return_block_addrs))
         nose.tools.assert_equal(len(return_block_addrs), len(expected_return_addrs), msg)
